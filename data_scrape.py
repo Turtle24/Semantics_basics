@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 
 def get_search_data(web_url):
-    page = requests.get(URL)
+    page = requests.get(web_url)
     soup = BeautifulSoup(page.content, 'html.parser')
     results = soup.find(class_='feed feed-grid')
     job_elems = results.find_all('div', class_='simple-item-title item-title')
@@ -20,12 +20,19 @@ def get_word_counts(elem_jobs):
         words = nltk.tokenize.word_tokenize(text)
         all_words += words
     return all_words
-    
-URL = 'https://www.menshealth.com/search/?q=diet'
-results = get_search_data(URL)
 
-diet_search = get_word_counts(results)
+men_url = 'https://www.menshealth.com/search/?q=diet'
+men_results = get_search_data(men_url)
 
-fd = nltk.FreqDist(diet_search)
+women_url = 'https://www.womenshealthmag.com/search/?q=diet'
+women_results = get_search_data(women_url)
 
-fd.plot(10)
+
+men_diet_search = get_word_counts(men_results)
+men_fd = nltk.FreqDist(men_diet_search)
+
+women_diet_search = get_word_counts(women_results)
+women_fd = nltk.FreqDist(women_diet_search)
+
+men_fd.plot(10)
+women_fd.plot(10)

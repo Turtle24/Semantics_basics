@@ -2,8 +2,8 @@ from bs4 import BeautifulSoup
 import requests 
 import nltk 
 from nltk.tokenize import word_tokenize, sent_tokenize
-from collections import Counter
-import matplotlib.pyplot as plt
+import collections
+import pandas as pd
 
 class RetrieveSearchData:
     def __init__(self, name, search):
@@ -22,9 +22,17 @@ class RetrieveSearchData:
 
     # Search term word count in titles
     def get_word_counts(self, elem_jobs):
-        all_words = []
+        c = collections.Counter()
+        # all_words = []
         for elem_job in elem_jobs:
             text = elem_job.text
             words = nltk.tokenize.word_tokenize(text)
-            all_words += words
-        return nltk.FreqDist(all_words)
+            # all_words += words
+            c.update(words) 
+        return c.most_common(10)   #nltk.FreqDist(all_words)
+
+    def create_csv(gender, search_term):
+        search = RetrieveSearchData(gender, search_term)
+        search_data = search.get_search_data()
+        search_results = search.get_word_counts(search_data)
+        return pd.DataFrame(search_results, columns=['word', 'count']).to_csv('data/'+ gender + '_' + search_term +'.csv', index=False)

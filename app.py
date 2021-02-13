@@ -1,16 +1,13 @@
-from  data_creator import RetrieveSearchData
+from data_creator import RetrieveSearchData
+import matplotlib.pyplot as plt
+import pandas as pd
 
-# Men - 'diet'
-men_diet = RetrieveSearchData('men', 'diet')
-men_diet_data = men_diet.get_search_data()
-men_diet_results = men_diet.get_word_counts(men_diet_data)
+# Create Excel-CSV. Inputs are men/women and search_term can be anything you want to search.
+# RetrieveSearchData.create_csv('men', 'workout')
 
-# Women - 'diet'
-women_diet = RetrieveSearchData('women', 'diet')
-women_diet_data = women_diet.get_search_data()
-women_diet_results = women_diet.get_word_counts(women_diet_data)
-
-# Show data
-men_diet_results.plot(10)
-women_diet_results.plot(10)
+# Plot Data you searched
+data = pd.read_csv('data/men_workout.csv')
+plt.plot(data['count'])
+plt.xticks([1,2,3,4,5,6,7,8,9,10],
+            data['word'])
 plt.show()

@@ -2,8 +2,11 @@ from bs4 import BeautifulSoup
 import requests 
 import nltk 
 from nltk.tokenize import word_tokenize, sent_tokenize
+# from nltk.corpus import stopwords
 import collections
 import pandas as pd
+import re
+
 
 class RetrieveSearchData:
     def __init__(self, name, search):
@@ -23,12 +26,12 @@ class RetrieveSearchData:
     # Search term word count in titles
     def get_word_counts(self, elem_jobs):
         c = collections.Counter()
-        # all_words = []
         for elem_job in elem_jobs:
             text = elem_job.text
             words = nltk.tokenize.word_tokenize(text)
-            # all_words += words
-            c.update(words) 
+            words_tag = nltk.pos_tag(words)
+            words_select = [word for word, pos in words_tag if pos.startswith("NNP") or pos.startswith('VB')]
+            c.update(words_select) 
         return c.most_common(10)   #nltk.FreqDist(all_words)
 
     def create_csv(gender, search_term):

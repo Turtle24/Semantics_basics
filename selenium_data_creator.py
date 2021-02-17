@@ -23,13 +23,34 @@ class RetrieveSearchData:
         self.search = search
         
     # Search data method
-    def get_search_data(self):
+    def get_search_data(self, scrolling=True):
+        # Selenium
         websites = {'men': 'https://www.menshealth.com/search/?q=', 'women': 'https://www.womenshealthmag.com/search/?q='}
         web_url = websites[self.name] + self.search
         driver.get(web_url)
-        button = driver.find_element_by_id("onetrust-accept-btn-handler")
         time.sleep(3)
+        button = driver.find_element_by_id("onetrust-accept-btn-handler")
         button.click()
+        count = 0
+        while scrolling:
+            count += 1
+            driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+            time.sleep(3)
+            wait = WebDriverWait(driver,10)
+            try:
+                element = wait.until(EC.element_to_be_clickable((By.XPATH,"//button[@type='button']")))
+                element.click()
+                print(f"Page/s: {count}")
+            except:
+                print("Done")
+                scrolling = False
+            
+        # Soup
+        page_source = driver.page_source
+        soup = BeautifulSoup(page_source, 'html.parser')
+        results = soup.find(class_='feed feed-grid')
+        job_elems = results.find_all('div', class_='simple-item-title item-title')
+        return job_elems
         
     # Search term word count in titles
     def get_word_counts(self, elem_jobs):
@@ -48,5 +69,8 @@ class RetrieveSearchData:
         search_results = search.get_word_counts(search_data)
         return pd.DataFrame(search_results, columns=['word', 'count']).to_csv('data/'+ gender + '_' + search_term +'.csv', index=False)
 
-test = RetrieveSearchData('men', 'workout')
-test.get_search_data()
+# test = RetrieveSearchData('men', 'bodyweight')
+# test_data = test.get_search_data()
+# print(test_data)
+
+RetrieveSearchData.create_csv('men', 'diet')

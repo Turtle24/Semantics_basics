@@ -69,8 +69,4 @@ class RetrieveSearchData:
         search_results = search.get_word_counts(search_data)
         return pd.DataFrame(search_results, columns=['word', 'count']).to_csv('data/'+ gender + '_' + search_term +'.csv', index=False)
 
-# test = RetrieveSearchData('men', 'bodyweight')
-# test_data = test.get_search_data()
-# print(test_data)
-
-RetrieveSearchData.create_csv('men', 'diet')
+RetrieveSearchData.create_csv('women', 'diet')
